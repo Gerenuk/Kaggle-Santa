@@ -54,3 +54,15 @@ class Rectangle:
             return Rectangle(newcoor1_0, newcoor2_0, newcoor1_1, newcoor2_1)
         else:
             return Rectangle(newcoor2_0, newcoor1_0, newcoor2_1, newcoor1_1)
+        
+    def dim(self, coorid):
+        a, b=self.coor[coorid]
+        return b-a
+        
+    def set_position(self, x, y):
+        width=self.dim(0)
+        height=self.dim(1)
+        self.coor=((x, x+width), (y,y+height))
+        
+    def fits_inside(self, rect):
+        return self.dim(0)<=rect.dim(0) and self.dim(1)<=rect.dim(1)

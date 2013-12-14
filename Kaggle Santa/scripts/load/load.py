@@ -13,3 +13,5 @@ with data.open("presents.csv", newline="") as f:
         present=Present(line[0],(line[1],line[2],line[3]))
         presents.append(present)
         #print(present)
+
+#change

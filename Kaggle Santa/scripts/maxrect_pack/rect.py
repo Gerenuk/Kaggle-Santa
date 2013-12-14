@@ -1,16 +1,18 @@
+CHECK_COOR=False
+
 class NoCut(Exception):
     pass
 
 class Rectangle:
-    __slots__=["coor", "plot_options"]
+    __slots__=["coor"]
     def __init__(self, x1, y1, x2, y2):
         assert x1<x2
         assert y1<y2
         self.coor=((x1, x2), (y1, y2))
         
     def overlap(self, rect):
-        return (not(rect.x2<=self.x1 or self.x1<=rect.x2) and
-                not(rect.y2<=self.y1 or self.y1<=rect.y2))
+        return (not(rect.coor[0][1]<=self.coor[0][0] or self.coor[0][1]<=rect.coor[0][0]) and
+                not(rect.coor[1][1]<=self.coor[1][0] or self.coor[1][1]<=rect.coor[1][0]))
         
     def cut_rect(self, rect):
         result=[]
@@ -20,7 +22,7 @@ class Rectangle:
                 result.append(rect_cut)
         return result
     
-    def cut(self, rect, coorid1, take_high, check_coor1=True, check_coor2=True):
+    def cut(self, rect, coorid1, take_high, check_coor1=CHECK_COOR, check_coor2=CHECK_COOR):
         coor1=rect.coor[coorid1][take_high]
         coor2_0=rect.coor[1-coorid1][0]
         coor2_1=rect.coor[1-coorid1][1]

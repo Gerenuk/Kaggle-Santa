@@ -1,5 +1,5 @@
 from maxrect_pack.plotrect import plotrects
-from maxrect_pack.rect import Rectangle, NoCut
+from maxrect_pack.rect import Rectangle
 from maxrect_pack.recthelper import random_rects
 import random
 
@@ -16,11 +16,11 @@ if __name__ == '__main__':
     for rc in rects_cut:
         new_rects_free=[]
         for rf in rects_free:
-            try:
+            if rc.overlap(rf):
                 new_rects=rf.cut_rect(rc)
                 if new_rects:
                     new_rects_free.extend(new_rects)
-            except NoCut:
+            else:
                 new_rects_free.append(rf)
         rects_free=new_rects_free
                 

@@ -15,12 +15,15 @@ class Rectangle:
     def cut_rect(self, rect):
         result=[]
         for coorid1, take_high in [(0,0),(0,1),(1,0),(1,1)]:
-            rect_cut=self.cut(coorid1,rect.coor[coorid1][take_high], rect.coor[1-coorid1][0], rect.coor[1-coorid1][1], take_high)
+            rect_cut=self.cut(rect, coorid1, take_high)
             if rect_cut is not None:
                 result.append(rect_cut)
         return result
     
-    def cut(self, coorid1, coor1, coor2_0, coor2_1, take_high, check_coor1=True, check_coor2=True):
+    def cut(self, rect, coorid1, take_high, check_coor1=True, check_coor2=True):
+        coor1=rect.coor[coorid1][take_high]
+        coor2_0=rect.coor[1-coorid1][0]
+        coor2_1=rect.coor[1-coorid1][1]
         assert coor2_0<coor2_1
         selfcoor1=self.coor[coorid1]
         selfcoor2=self.coor[1-coorid1]

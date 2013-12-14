@@ -14,7 +14,7 @@ def plotrects(*rects, plot_options=None, random_color=None, area_w=DEFAULT_AREA_
         
     if plot_options is None:
         if random_color:
-            plot_options=[{"fc":get_quali_color(),"alpha":DEFAULT_ALPHA} if c else {"fc":"white", "ec":"black"} for c in random_color]
+            plot_options=[{"fc":get_quali_color(),"alpha":DEFAULT_ALPHA} if c else {"fc":"white", "ec":"black", "lw":3} for c in random_color]
         else:
             plot_options=[{"fc":get_quali_color(),"alpha":DEFAULT_ALPHA} for _ in rects]
     

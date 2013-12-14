@@ -10,7 +10,7 @@ presents=[]
 with data.open("presents.csv", newline="") as f:
     f.readline()
     for line in csv.reader(f, delimiter=","):
-        present=Present(line[0],(line[1],line[2],line[3]))
+        present=Present(int(line[0]),(int(line[1]),int(line[2]),int(line[3])))
         presents.append(present)
         #print(present)
 

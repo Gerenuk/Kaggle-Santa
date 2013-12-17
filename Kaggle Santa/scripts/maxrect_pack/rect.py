@@ -10,6 +10,9 @@ class Rectangle:
         assert y1<y2
         self.coor=((x1, x2), (y1, y2))
         
+    def __repr__(self):
+        return "[{},{} | {},{}]".format(self.coor[0][0], self.coor[1][0],self.coor[0][1], self.coor[1][1])
+        
     def overlap(self, rect):
         return (not(rect.coor[0][1]<=self.coor[0][0] or self.coor[0][1]<=rect.coor[0][0]) and
                 not(rect.coor[1][1]<=self.coor[1][0] or self.coor[1][1]<=rect.coor[1][0]))
@@ -66,3 +69,9 @@ class Rectangle:
         
     def fits_inside(self, rect):
         return self.dim(0)<=rect.dim(0) and self.dim(1)<=rect.dim(1)
+    
+    def is_inside(self, rect):
+        return (self.coor[0][0]>=rect.coor[0][0] and
+                self.coor[0][1]<=rect.coor[0][1] and
+                self.coor[1][0]>=rect.coor[1][0] and
+                self.coor[1][1]<=rect.coor[1][1])

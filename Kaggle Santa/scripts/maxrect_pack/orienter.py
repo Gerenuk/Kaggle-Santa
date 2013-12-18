@@ -7,4 +7,4 @@ class Orienter:
 
     def __iter__(self):
         yield Rectangle(self.base_rect.coor[0][0], self.base_rect.coor[1][0], self.base_rect.coor[0][1], self.base_rect.coor[1][1])
-        yield Rectangle(self.base_rect.coor[0][0], self.base_rect.coor[1][0], self.base_rect.coor[0][0] + self.base_rect.dim(1), self.base_rect.coor[1][0] + self.base_rect.dim(0))
+        yield Rectangle(self.base_rect.coor[0][0], self.base_rect.coor[1][0], self.base_rect.coor[0][0] + self.base_rect.dim[1], self.base_rect.coor[1][0] + self.base_rect.dim[0])

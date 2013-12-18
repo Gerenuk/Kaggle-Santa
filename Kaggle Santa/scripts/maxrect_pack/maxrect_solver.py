@@ -11,13 +11,13 @@ class StopFit(Exception):
 
 
 class MaxRectSolver:
-    def __init__(self, width, height, rects_to_place, positioner, orienter, priority_pick=None):
+    def __init__(self, width, height, rects_to_place, positioner, priority_pick=None):
         self.width = width
         self.height = height
         self.maxrect = MaxRect(width, height)
         self.positioner = positioner
         self.priority_pick = priority_pick
-        self.rects_to_place = [orienter(r) for r in rects_to_place]
+        self.rects_to_place = rects_to_place
 
         self.placed_rects = []
 
@@ -51,11 +51,16 @@ class MaxRectSolver:
                     self.maxrect.cut_rect(new_rect_placed)
             except NoFit:
                 self.rects_to_place = list(rects_to_place)
+                print("Partly solved with packing density {:.0%}".format(self.packing_density()))
                 raise StopFit("No more fit in second phase with {} rects left-over".format(len(self.rects_to_place)))
 
         rects_to_place = list(rects_to_place)
+        self.rects_to_place = rects_to_place
         assert not rects_to_place, "Left-over: {}".format(len(rects_to_place))
-        print("All solved with packing density {:.0%}".format(sum(r.area() for r in self.placed_rects) / (self.width * self.height)))
+        print("All solved with packing density {:.0%}".format(self.packing_density()))
+
+    def packing_density(self):
+        return sum(r.area() for r in self.placed_rects) / (self.width * self.height)
 
     def plot(self, plot_free_rect=False):
         rects_to_plot = list(self.placed_rects)

@@ -12,6 +12,7 @@ class Rectangle:
         assert x1 < x2
         assert y1 < y2
         self.coor = ((x1, x2), (y1, y2))
+        self.dim = (x2 - x1, y2 - y1)  # for performance reasons
 
     def __repr__(self):
         return "[{},{} | {},{}]".format(self.coor[0][0], self.coor[1][0], self.coor[0][1], self.coor[1][1])
@@ -61,20 +62,14 @@ class Rectangle:
         else:
             return Rectangle(newcoor2_0, newcoor1_0, newcoor2_1, newcoor1_1)
 
-    def dim(self, coorid):
-        a, b = self.coor[coorid]
-        return b - a
-
     def area(self):
-        return self.dim(0) * self.dim(1)
+        return self.dim[0] * self.dim[1]
 
     def set_position(self, x, y):
-        width = self.dim(0)
-        height = self.dim(1)
-        self.coor = ((x, x + width), (y, y + height))
+        self.coor = ((x, x + self.dim[0]), (y, y + self.dim[1]))
 
     def fits_inside(self, rect):
-        return self.dim(0) <= rect.dim(0) and self.dim(1) <= rect.dim(1)
+        return self.dim[0] <= rect.dim[0] and self.dim[1] <= rect.dim[1]
 
     def is_inside(self, rect):
         return (self.coor[0][0] >= rect.coor[0][0] and

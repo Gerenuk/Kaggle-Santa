@@ -1,0 +1,38 @@
+         42005590 function calls in 32.108 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.002    0.002   32.103   32.103 test_maxrect_layer.py:13(solve_all)
+       73    0.047    0.001   32.100    0.440 maxrect_solver.py:28(solve)
+
+     9928    0.281    0.000   20.512    0.002 maxrect.py:24(cut_rect)
+     9928    7.593    0.001   19.611    0.002 maxrect.py:37(_merge_wrapped_rect)  !!!
+ 23343376   11.973    0.000   11.973    0.000 rect.py:79(is_inside)               !!!
+    10000    2.407    0.000   11.517    0.001 positioner.py:14(get_best_position) !!!
+  2537964    2.369    0.000    4.557    0.000 rect.py:76(fits_inside)             !!!
+  2960958    2.275    0.000    3.425    0.000 orienter3D.py:8(__iter__)
+  7615638    2.251    0.000    2.251    0.000 rect.py:64(dim)
+  2584745    1.184    0.000    1.184    0.000 rect.py:11(__init__)
+   671998    0.783    0.000    0.948    0.000 positioner.py:51(scorerBSSF)
+    23510    0.085    0.000    0.296    0.000 rect.py:23(cut_rect)
+   417661    0.270    0.000    0.270    0.000 rect.py:19(overlap)
+    94040    0.169    0.000    0.204    0.000 rect.py:31(cut)
+   101719    0.121    0.000    0.177    0.000 rect.py:71(set_position)
+   671998    0.165    0.000    0.165    0.000 {built-in method min}
+   891718    0.103    0.000    0.103    0.000 {method 'append' of 'list' objects}
+       73    0.000    0.000    0.018    0.000 maxrect_solver.py:62(packing_density)
+       73    0.001    0.000    0.018    0.000 {built-in method sum}
+    10001    0.004    0.000    0.016    0.000 maxrect_solver.py:63(<genexpr>)
+     9928    0.006    0.000    0.012    0.000 rect.py:68(area)
+    23403    0.004    0.000    0.004    0.000 {method 'extend' of 'list' objects}
+      145    0.003    0.000    0.003    0.000 {built-in method print}
+    10073    0.002    0.000    0.002    0.000 {built-in method iter}
+     5840    0.002    0.000    0.002    0.000 {method 'remove' of 'list' objects}
+      217    0.001    0.000    0.001    0.000 {method 'format' of 'str' objects}
+       73    0.000    0.000    0.000    0.000 maxrect_solver.py:14(__init__)
+       73    0.000    0.000    0.000    0.000 maxrect.py:9(__init__)
+       73    0.000    0.000    0.000    0.000 positioner.py:10(__init__)
+      288    0.000    0.000    0.000    0.000 {built-in method len}
+       72    0.000    0.000    0.000    0.000 {built-in method next}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}

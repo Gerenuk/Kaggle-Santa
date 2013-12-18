@@ -9,6 +9,6 @@ HEIGHT = 1000
 
 if __name__ == '__main__':
     rects_to_place = random_rects(WIDTH, HEIGHT, 200, 200, 100)
-    solver = MaxRectSolver(WIDTH, HEIGHT, rects_to_place, Positioner(scorerBSSF), Orienter)
+    solver = MaxRectSolver(WIDTH, HEIGHT, rects_to_place, Positioner(scorerBSSF), Orienter, priority_pick=80)
     solver.solve()
     solver.plot()

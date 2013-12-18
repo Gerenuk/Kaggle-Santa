@@ -20,8 +20,8 @@ class Positioner:
 
         best_score = float("-inf")
         best_free_rect = None
+
         best_rect_orientation_to_place = None
-        best_rect_to_place = None
 
         while 1:
             for rect_orientation_to_place in cur_rects_to_place:

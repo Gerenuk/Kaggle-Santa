@@ -6,7 +6,7 @@ class NoCut(Exception):
 
 
 class Rectangle:
-    __slots__ = ["coor"]
+    __slots__ = ["coor", "dim"]
 
     def __init__(self, x1, y1, x2, y2):
         assert x1 < x2

@@ -65,6 +65,9 @@ class Rectangle:
         a, b = self.coor[coorid]
         return b - a
 
+    def area(self):
+        return self.dim(0) * self.dim(1)
+
     def set_position(self, x, y):
         width = self.dim(0)
         height = self.dim(1)

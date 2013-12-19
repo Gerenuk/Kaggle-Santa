@@ -28,10 +28,18 @@ class Rectangle:
 
     def get_cuts(self, rect):
         """
+        returns all valid cut (i.e. these cuts dont chop off all the rectangle)
         assumes an overlap is given
-        return ((coorid_cut, coor_high), <cut_active>) 
+        return [1, (coorid_cut, coor_high)] or [0, <touchingcuts>] 
         """
-        result = []
+        touching_coor = []
+        for coorid_cut, cut_high in CUT_TYPES:
+            if self.coor[coorid_cut][1 - cut_high] == rect.coor[coorid_cut][cut_high]:
+                touching_coor.append((coorid_cut, cut_high))
+        if touching_coor:
+            return [0] + touching_coor
+
+        result = [1]  # marker for non touching cuts
         for coorid_cut, coor_high in CUT_TYPES:
             coor_cut = rect.coor[coorid_cut][coor_high]
             selfcoor = self.coor[coorid_cut]
@@ -44,7 +52,7 @@ class Rectangle:
 
             if ((coor_high and coor_cut < selfcoor[1]) or
                 (not coor_high and coor_cut > selfcoor[0])):
-                    result.append(((coorid_cut, coor_high), coor_cut != selfcoor[1 - coor_high]))
+                    result.append((coorid_cut, coor_high))
 
         return result
 

@@ -7,12 +7,12 @@ class Orienter3D:
 
     def __iter__(self):
         x, y, z = self.base_rect.coor
-        yield Rectangle((0, x), (0, y))
-        yield Rectangle((0, y), (0, x))
-        yield Rectangle((0, x), (0, z))
-        yield Rectangle((0, z), (0, x))
-        yield Rectangle((0, y), (0, z))
-        yield Rectangle((0, z), (0, y))
+        return iter([Rectangle((0, x), (0, y)),
+                    Rectangle((0, y), (0, x)),
+                    Rectangle((0, x), (0, z)),
+                    Rectangle((0, z), (0, x)),
+                    Rectangle((0, y), (0, z)),
+                    Rectangle((0, z), (0, y))])
 
     @staticmethod
     def orient_all(cubes):

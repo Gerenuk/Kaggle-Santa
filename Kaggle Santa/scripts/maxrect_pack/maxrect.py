@@ -26,9 +26,9 @@ class MaxRect:
         new_free_rects = deque()
         for rf in self.free_rects:
             if rf.overlap(rect):
-                for cut_type, cut_active in rf.get_cuts(rect):
-                    if cut_active:
-                        new_free_rects.append(rf.cut_off(rect, cut_type))
+                active, *cuts = rf.get_cuts(rect)
+                if active:
+                    new_free_rects.extend([rf.cut_off(rect, cut_type) for cut_type in cuts])
             else:
                 new_free_rects.append(rf)
         self.free_rects = new_free_rects

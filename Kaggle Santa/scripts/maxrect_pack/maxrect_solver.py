@@ -64,6 +64,7 @@ class MaxRectSolver:
     def place_rect(self, rect):
         assert all(LOWER_BOUND <= x <= self.width for x in itertools.chain.from_iterable(rect.coor)), "Rectangle {} outside Maxrect boundary".format(rect)
         self.placed_rects.append(rect)
+        # print("Placed rects {}".format(len(self.placed_rects)))
 
     def packing_density(self):
         return sum(r.area() for r in self.placed_rects) / (self.width * self.height)

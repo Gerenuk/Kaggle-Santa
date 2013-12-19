@@ -1,9 +1,9 @@
+from collections import deque, defaultdict
 import itertools
 import reprlib
 
 from maxrect_pack.plotrect import plotrects
 from maxrect_pack.rect import Rectangle
-from collections import deque
 
 
 class MaxRect:
@@ -24,16 +24,28 @@ class MaxRect:
 
     def cut_off(self, rect):
         new_free_rects = deque()
+
+        to_merge_dict = defaultdict(list)
         for rf in self.free_rects:
             if rf.overlap(rect):
                 active, *cuts = rf.get_cuts(rect)
                 if active:
-                    new_free_rects.extend([rf.cut_off(rect, cut_type) for cut_type in cuts])
+                    for cut_type in cuts:
+                        chopped_rect = rf.cut_off(rect, cut_type)
+                        # new_free_rects.append(chopped_rect)
+                        to_merge_dict[cut_type].append(chopped_rect)
+                else:
+                    if len(cuts) == 1:
+                        to_merge_dict[cuts[0]].append(rf)
+                    else:
+                        new_free_rects.append(rf)
             else:
                 new_free_rects.append(rf)
-        self.free_rects = new_free_rects
 
-        self.free_rects = self._merge_wrapped_rect(self.free_rects)
+        for _cut, rects in to_merge_dict.items():
+            new_free_rects.extend(self._merge_wrapped_rect(rects))
+
+        self.free_rects = new_free_rects
 
     @staticmethod
     def _merge_wrapped_rect(rects_to_merge):
@@ -47,4 +59,6 @@ class MaxRect:
                     break
             else:
                 keep_rect.append(True)
-        return list(itertools.compress(rects_to_merge, keep_rect))
+        result = list(itertools.compress(rects_to_merge, keep_rect))
+        # print("Merged {} of {} rectangles".format(len(rects_to_merge) - len(result), len(rects_to_merge)))
+        return result

@@ -3,6 +3,7 @@ import reprlib
 
 from maxrect_pack.plotrect import plotrects
 from maxrect_pack.rect import Rectangle
+from collections import deque
 
 
 class MaxRect:
@@ -11,7 +12,7 @@ class MaxRect:
         self.height = height
 
         if free_rects is None:
-            free_rects = [Rectangle(0, 0, width, height)]
+            free_rects = deque([Rectangle((0, width), (0, height))])
 
         self.free_rects = free_rects
 
@@ -21,23 +22,24 @@ class MaxRect:
     def plot(self):
         plotrects(*self.free_rects, area_w=self.width, area_h=self.height)
 
-    def cut_rect(self, rect):
-        new_free_rects = []
+    def cut_off(self, rect):
+        new_free_rects = deque()
         for rf in self.free_rects:
-            if rect.overlap(rf):
-                new_rects = rf.cut_rect(rect)
-                if new_rects:
-                    new_free_rects.extend(new_rects)
+            if rf.overlap(rect):
+                for cut_type, cut_active in rf.get_cuts(rect):
+                    if cut_active:
+                        new_free_rects.append(rf.cut_off(rect, cut_type))
             else:
                 new_free_rects.append(rf)
         self.free_rects = new_free_rects
 
-        self._merge_wrapped_rect()
+        self.free_rects = self._merge_wrapped_rect(self.free_rects)
 
-    def _merge_wrapped_rect(self):
+    @staticmethod
+    def _merge_wrapped_rect(rects_to_merge):
         keep_rect = []
-        for check_rect in self.free_rects:
-            for outside_rect in self.free_rects:
+        for check_rect in rects_to_merge:
+            for outside_rect in rects_to_merge:
                 if check_rect is outside_rect:
                     continue
                 if check_rect.is_inside(outside_rect):
@@ -45,4 +47,4 @@ class MaxRect:
                     break
             else:
                 keep_rect.append(True)
-        self.free_rects = list(itertools.compress(self.free_rects, keep_rect))
+        return list(itertools.compress(rects_to_merge, keep_rect))

@@ -10,6 +10,6 @@ if __name__ == '__main__':
 
     rects_cut = random_rects(WIDTH, HEIGHT, 4, 4, 3)
     for r in rects_cut:
-        m.cut_rect(r)
+        m.cut_off(r)
 
     m.plot()

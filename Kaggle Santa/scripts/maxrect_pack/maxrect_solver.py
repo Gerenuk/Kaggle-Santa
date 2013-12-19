@@ -5,6 +5,8 @@ from maxrect_pack.maxrect import MaxRect
 from maxrect_pack.plotrect import plotrects
 from maxrect_pack.positioner import NoFit
 
+LOWER_BOUND = 0
+
 
 class StopFit(Exception):
     pass
@@ -33,8 +35,8 @@ class MaxRectSolver:
             while rects_to_place:
                 new_rect_placed, rect_orientation_chosen, _free_rect_used = self.positioner.get_best_position(rects_to_place, self.maxrect.free_rects)
                 rects_to_place.remove(rect_orientation_chosen)
-                self.placed_rects.append(new_rect_placed)
-                self.maxrect.cut_rect(new_rect_placed)
+                self.place_rect(new_rect_placed)
+                self.maxrect.cut_off(new_rect_placed)
                 # self.plot()
         except NoFit:
             self.rects_to_place = rects_to_place + rects_to_place_rest
@@ -47,8 +49,8 @@ class MaxRectSolver:
                 rects_to_place = iter(rects_to_place_rest)
                 for rect_to_place in rects_to_place:
                     new_rect_placed, rect_orientation_chosen, _free_rect_used = self.positioner.get_best_position([rect_to_place], self.maxrect.free_rects)
-                    self.placed_rects.append(new_rect_placed)
-                    self.maxrect.cut_rect(new_rect_placed)
+                    self.place_rect(new_rect_placed)
+                    self.maxrect.cut_off(new_rect_placed)
             except NoFit:
                 self.rects_to_place = list(rects_to_place)
                 print("Partly solved with packing density {:.0%}".format(self.packing_density()))
@@ -58,6 +60,10 @@ class MaxRectSolver:
         self.rects_to_place = rects_to_place
         assert not rects_to_place, "Left-over: {}".format(len(rects_to_place))
         print("All solved with packing density {:.0%}".format(self.packing_density()))
+
+    def place_rect(self, rect):
+        assert all(LOWER_BOUND <= x <= self.width for x in itertools.chain.from_iterable(rect.coor)), "Rectangle {} outside Maxrect boundary".format(rect)
+        self.placed_rects.append(rect)
 
     def packing_density(self):
         return sum(r.area() for r in self.placed_rects) / (self.width * self.height)

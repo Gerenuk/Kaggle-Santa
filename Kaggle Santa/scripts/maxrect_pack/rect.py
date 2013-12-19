@@ -1,66 +1,83 @@
-CHECK_COOR = False
-
-
-class NoCut(Exception):
-    pass
+CUT_TYPES = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
 
 class Rectangle:
     __slots__ = ["coor", "dim"]
 
-    def __init__(self, x1, y1, x2, y2):
-        assert x1 < x2
-        assert y1 < y2
-        self.coor = ((x1, x2), (y1, y2))
-        self.dim = (x2 - x1, y2 - y1)  # for performance reasons
+    def __init__(self, x12, y12):
+        assert x12[0] < x12[1]
+        assert y12[0] < y12[1]
+        self.coor = (x12, y12)
+        self.dim = (x12[1] - x12[0], y12[1] - y12[0])  # for performance reasons
 
     def __repr__(self):
         return "[{},{} | {},{}]".format(self.coor[0][0], self.coor[1][0], self.coor[0][1], self.coor[1][1])
 
     def overlap(self, rect):
-        return (not(rect.coor[0][1] <= self.coor[0][0] or self.coor[0][1] <= rect.coor[0][0]) and
-                not(rect.coor[1][1] <= self.coor[1][0] or self.coor[1][1] <= rect.coor[1][0]))
+        """
+        touching edges (and corners) also count as overlap
+        """
+        return not (rect.coor[0][1] < self.coor[0][0] or
+                    self.coor[0][1] < rect.coor[0][0] or
+                    rect.coor[1][1] < self.coor[1][0] or
+                    self.coor[1][1] < rect.coor[1][0])
 
-    def cut_rect(self, rect):
+#     def overlap_spec(self, rect):
+#         return ({(coorid_cut, take_high): self.coor[coorid_cut][0] < rect.coor[coorid_cut][take_high] < self.coor[coorid_cut][1] for coorid_cut, take_high in CUT_SPECS},
+#                 {(coorid_cut, take_high): self.coor[coorid_cut][0] <= rect.coor[coorid_cut][take_high] <= self.coor[coorid_cut][1] for coorid_cut, take_high in CUT_SPECS})
+
+    def get_cuts(self, rect):
+        """
+        assumes an overlap is given
+        return ((coorid_cut, coor_high), <cut_active>) 
+        """
         result = []
-        for coorid1, take_high in [(0, 0), (0, 1), (1, 0), (1, 1)]:
-            rect_cut = self.cut(rect, coorid1, take_high)
-            if rect_cut is not None:
-                result.append(rect_cut)
+        for coorid_cut, coor_high in CUT_TYPES:
+            coor_cut = rect.coor[coorid_cut][coor_high]
+            selfcoor = self.coor[coorid_cut]
+            assert (coor_high and coor_cut >= selfcoor[0]) or (not coor_high and coor_cut <= selfcoor[1]), "get_cuts() found no rectangle overlap for {} and {}".format(self, rect)
+
+            rectcoor2 = rect.coor[1 - coorid_cut]
+            selfcoor2 = self.coor[1 - coorid_cut]
+            if selfcoor2[1] <= rectcoor2[0] or rectcoor2[1] <= selfcoor2[0]:  # missed sideways in second coordinate; for a valid program only the equality should be possible if overlap already checked
+                continue
+
+            if ((coor_high and coor_cut < selfcoor[1]) or
+                (not coor_high and coor_cut > selfcoor[0])):
+                    result.append(((coorid_cut, coor_high), coor_cut != selfcoor[1 - coor_high]))
+
         return result
 
-    def cut(self, rect, coorid1, take_high, check_coor1=CHECK_COOR, check_coor2=CHECK_COOR):
-        coor1 = rect.coor[coorid1][take_high]
-        coor2_0 = rect.coor[1 - coorid1][0]
-        coor2_1 = rect.coor[1 - coorid1][1]
-        assert coor2_0 < coor2_1
-        selfcoor1 = self.coor[coorid1]
-        selfcoor2 = self.coor[1 - coorid1]
-        if (check_coor1 and
-            ((coor1 <= selfcoor1[0] and take_high) or
-             (coor1 >= selfcoor1[1] and not take_high))
-            ):
-            raise NoCut()
-        if (check_coor2 and
-            (coor2_1 <= selfcoor2[0] or coor2_0 >= selfcoor2[1])
-            ):
-            raise NoCut()
-        if coor1 <= selfcoor1[0] and not take_high:
-            return None
-        if coor1 >= selfcoor1[1] and take_high:
-            return None
-        if take_high:
-            newcoor1_0 = coor1
-            newcoor1_1 = selfcoor1[1]
+#     def cut_off(self, rect):
+#         result = []
+#         overlap = self.overlap_spec(rect)
+#         for cut_spec in CUT_TYPES:
+#             if overlap[0][cut_spec]:
+#                 rect_cut = self.cut_off(rect, cut_spec)
+#                 result.append(rect_cut)
+#         return result
+
+    def cut_off(self, rect, cut_type):
+        """
+        performs no overlap checks. be sure the overlap is given.
+        """
+        coorid_cut, cut_high = cut_type
+        coor_cut = rect.coor[coorid_cut][cut_high]
+
+        assert self.coor[coorid_cut][0] < coor_cut < self.coor[coorid_cut][1], "Cut not inside rectangle for rectangle {} and {} for cuttype {}".format(self, rect, cut_type)
+        assert rect.coor[1 - coorid_cut][1] > self.coor[1 - coorid_cut][0], "Cut missed rectangle sideways for rectangle {} and {} for cuttype {}".format(self, rect, cut_type)
+        assert rect.coor[1 - coorid_cut][0] < self.coor[1 - coorid_cut][1], "Cut missed rectangle sideways for rectangle {} and {} for cuttype {}".format(self, rect, cut_type)
+
+        if cut_high:
+            if coorid_cut:
+                return Rectangle(self.coor[0], (coor_cut, self.coor[1][1]))
+            else:
+                return Rectangle((coor_cut, self.coor[0][1]), self.coor[1])
         else:
-            newcoor1_0 = selfcoor1[0]
-            newcoor1_1 = coor1
-        newcoor2_0 = selfcoor2[0]
-        newcoor2_1 = selfcoor2[1]
-        if coorid1 == 0:
-            return Rectangle(newcoor1_0, newcoor2_0, newcoor1_1, newcoor2_1)
-        else:
-            return Rectangle(newcoor2_0, newcoor1_0, newcoor2_1, newcoor1_1)
+            if coorid_cut:
+                return Rectangle(self.coor[0], (self.coor[1][0], coor_cut))
+            else:
+                return Rectangle((self.coor[0][0], coor_cut), self.coor[1])
 
     def area(self):
         return self.dim[0] * self.dim[1]

@@ -10,14 +10,14 @@ HEIGHT = 20
 
 
 if __name__ == '__main__':
-    rects_free = [Rectangle(1, 1, WIDTH, HEIGHT)]
+    rects_free = [Rectangle((1, WIDTH), (1, HEIGHT))]
     rects_cut = random_rects(WIDTH, HEIGHT, 4, 4, 3)
 
     for rc in rects_cut:
         new_rects_free = []
         for rf in rects_free:
             if rc.overlap(rf):
-                new_rects = rf.cut_rect(rc)
+                new_rects = rf.cut_off(rc)
                 if new_rects:
                     new_rects_free.extend(new_rects)
             else:

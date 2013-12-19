@@ -8,7 +8,7 @@
 
      9928    0.281    0.000   20.512    0.002 maxrect.py:24(cut_rect)
      9928    7.593    0.001   19.611    0.002 maxrect.py:37(_merge_wrapped_rect)  !!!
- 23343376   11.973    0.000   11.973    0.000 rect.py:79(is_inside)               !!!
+ 23343376   11.973    0.000   11.973    0.000 rect.py:79(is_inside)              
     10000    2.407    0.000   11.517    0.001 positioner.py:14(get_best_position) !!!
   2537964    2.369    0.000    4.557    0.000 rect.py:76(fits_inside)             !!!
   2960958    2.275    0.000    3.425    0.000 orienter3D.py:8(__iter__)

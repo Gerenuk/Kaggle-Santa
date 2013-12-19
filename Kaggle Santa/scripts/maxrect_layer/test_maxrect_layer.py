@@ -1,3 +1,4 @@
+import cProfile
 from maxrect_layer.orienter3D import Orienter3D
 from maxrect_pack.maxrect_solver import MaxRectSolver, StopFit
 from maxrect_pack.orienter import Orienter
@@ -29,12 +30,11 @@ if __name__ == '__main__':
 
     presents_to_place = Orienter3D.orient_all(presents[:USE_NUM_PRESENTS])
 
-    layers = solve_all(presents_to_place)
+    # layers = solve_all(presents_to_place)
+    cProfile.run("layers = solve_all(presents_to_place)", sort="cumulative")
 
-    densities = [l.packing_density() for l in layers]
+    densities = [l.packing_density() for l in layers]  # @UndefinedVariable
     print("Average layer packing: {:1%}".format(sum(densities) / len(densities)))
     # rects_to_place = random_rects(WIDTH, HEIGHT, 200, 200, 100)
 
-    # import cProfile
-    # cProfile.run("solve_all(presents_to_place)", sort="cumulative")
 

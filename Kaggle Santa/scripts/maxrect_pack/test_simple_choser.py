@@ -14,6 +14,6 @@ if __name__ == '__main__':
     for r in rects_cut:
         container_rect = simple_smallest_x_fit(r, m.free_rects)
         r.set_position(container_rect.coor[0][0], container_rect.coor[1][0])
-        m.cut_rect(r)
+        m.cut_off(r)
 
     m.plot()

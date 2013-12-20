@@ -74,6 +74,7 @@ class Rectangle:
             else:
                 return Rectangle((self.coor[0][0], coor_cut), self.coor[1])
 
+    @property
     def area(self):
         return self.dim[0] * self.dim[1]
 

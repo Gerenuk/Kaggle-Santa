@@ -24,6 +24,7 @@ def load_csv(file):
 
 
 def presents():
+    Present = namedtuple("Present", "id coor")
     return pickle.load(data.open("presents.pickle", options="rb"))
 
 # change

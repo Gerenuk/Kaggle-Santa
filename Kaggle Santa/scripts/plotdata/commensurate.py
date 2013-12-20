@@ -3,7 +3,7 @@ import itertools
 import matplotlib.pyplot as plt
 
 from load.load import presents
-
+presents = presents()
 
 edges = list(tuple(sorted(p.coor)) for p in presents)
 

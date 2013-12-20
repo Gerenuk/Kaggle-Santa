@@ -1,5 +1,5 @@
 import itertools
-import reprlib
+from collections import deque
 
 from maxrect_pack.maxrect import MaxRect
 from maxrect_pack.plotrect import plotrects
@@ -21,7 +21,7 @@ class MaxRectSolver:
         self.priority_pick = priority_pick
         self.rects_to_place = rects_to_place
 
-        self.placed_rects = []
+        self.placed_rects = deque()
 
     def __repr__(self):
         # return "MaxRectSolver(Place {} rects into {}; {})".format(len(self.rects_to_place), self.maxrect, reprlib.repr(self.rects_to_place))
@@ -37,10 +37,9 @@ class MaxRectSolver:
                 rects_to_place.remove(rect_orientation_chosen)
                 self.place_rect(new_rect_placed)
                 self.maxrect.cut_off(new_rect_placed)
-                # self.plot()
         except NoFit:
             self.rects_to_place = rects_to_place + rects_to_place_rest
-            raise NoFit("No more fit with {} rects left-over".format(len(rects_to_place)))
+            raise NoFit("Could place priority rects with {} left-overs".format(len(rects_to_place)))
 
         assert not rects_to_place, "Left-over: {}".format(len(rects_to_place))
 
@@ -54,12 +53,14 @@ class MaxRectSolver:
             except NoFit:
                 self.rects_to_place = list(rects_to_place)
                 print("Partly solved with packing density {:.0%}".format(self.packing_density()))
-                raise StopFit("No more fit in second phase with {} rects left-over".format(len(self.rects_to_place)))
+                return self.rects_to_place
 
         rects_to_place = list(rects_to_place)
-        self.rects_to_place = rects_to_place
         assert not rects_to_place, "Left-over: {}".format(len(rects_to_place))
+
+        self.rects_to_place = []
         print("All solved with packing density {:.0%}".format(self.packing_density()))
+        return []
 
     def place_rect(self, rect):
         assert all(LOWER_BOUND <= x <= self.width for x in itertools.chain.from_iterable(rect.coor)), "Rectangle {} outside Maxrect boundary".format(rect)

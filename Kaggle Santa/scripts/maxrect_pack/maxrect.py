@@ -25,17 +25,16 @@ class MaxRect:
     def cut_off(self, rect):
         new_free_rects = deque()
 
-        to_merge_dict = defaultdict(list)
+        to_merge_dict = defaultdict(deque)
         for rf in self.free_rects:
             if rf.overlap(rect):
                 active, *cuts = rf.get_cuts(rect)
                 if active:
                     for cut_type in cuts:
                         chopped_rect = rf.cut_off(rect, cut_type)
-                        # new_free_rects.append(chopped_rect)
                         to_merge_dict[cut_type].append(chopped_rect)
                 else:
-                    if len(cuts) == 1:
+                    if len(cuts) == 1:  # len>2 only when corners touching
                         to_merge_dict[cuts[0]].append(rf)
                     else:
                         new_free_rects.append(rf)
@@ -49,7 +48,7 @@ class MaxRect:
 
     @staticmethod
     def _merge_wrapped_rect(rects_to_merge):
-        keep_rect = []
+        keep_rect = deque()
         for check_rect in rects_to_merge:
             for outside_rect in rects_to_merge:
                 if check_rect is outside_rect:

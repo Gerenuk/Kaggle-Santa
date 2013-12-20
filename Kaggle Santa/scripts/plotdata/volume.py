@@ -5,7 +5,7 @@ import operator
 import matplotlib.pyplot as plt
 
 from load.load import presents
-
+presents = presents()
 
 volumes = [functools.reduce(operator.mul, p.coor, 1) for p in presents]
 count = Counter(volumes)

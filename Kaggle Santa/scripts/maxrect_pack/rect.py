@@ -22,10 +22,6 @@ class Rectangle:
                     rect.coor[1][1] < self.coor[1][0] or
                     self.coor[1][1] < rect.coor[1][0])
 
-#     def overlap_spec(self, rect):
-#         return ({(coorid_cut, take_high): self.coor[coorid_cut][0] < rect.coor[coorid_cut][take_high] < self.coor[coorid_cut][1] for coorid_cut, take_high in CUT_SPECS},
-#                 {(coorid_cut, take_high): self.coor[coorid_cut][0] <= rect.coor[coorid_cut][take_high] <= self.coor[coorid_cut][1] for coorid_cut, take_high in CUT_SPECS})
-
     def get_cuts(self, rect):
         """
         returns all valid cut (i.e. these cuts dont chop off all the rectangle)
@@ -55,15 +51,6 @@ class Rectangle:
                     result.append((coorid_cut, coor_high))
 
         return result
-
-#     def cut_off(self, rect):
-#         result = []
-#         overlap = self.overlap_spec(rect)
-#         for cut_spec in CUT_TYPES:
-#             if overlap[0][cut_spec]:
-#                 rect_cut = self.cut_off(rect, cut_spec)
-#                 result.append(rect_cut)
-#         return result
 
     def cut_off(self, rect, cut_type):
         """

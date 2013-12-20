@@ -2,7 +2,7 @@ from collections import Counter
 
 from load.load import presents
 import matplotlib.pyplot as plt
-
+presents = presents()
 
 edges = list(sorted(p.coor) for p in presents)
 coor = list(zip(*edges))

@@ -7,7 +7,7 @@ from pprint import pprint
 import matplotlib.pyplot as plt
 
 from load.load import presents
-
+presents = presents()
 
 def mapping(x):
     if x <= 4:

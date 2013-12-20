@@ -24,28 +24,31 @@ class Positioner:
         best_rect_orientation_to_place = None
 
         while 1:
-            for rect_orientation_to_place in cur_rects_to_place:
-                for free_rect in free_rects:
-                    for rect_to_place in rect_orientation_to_place:
-                        if rect_to_place.fits_inside(free_rect):
-                            score = self.scorer(rect_to_place, free_rect)
-                            if score >= best_score:
-                                best_score = score
-                                best_free_rect = free_rect
-                                rect_to_place.set_position(free_rect.coor[0][0], free_rect.coor[1][0])
-                                best_rect_orientation_to_place = rect_orientation_to_place
-                                best_rect_to_place = rect_to_place
+            for rect_to_place, free_rect, rect_orientation_to_place in self._get_fitting(cur_rects_to_place, free_rects):
+                score = self.scorer(rect_to_place, free_rect)
+                if score >= best_score:
+                    best_score = score
+                    best_free_rect = free_rect
+                    rect_to_place.set_position(free_rect.coor[0][0], free_rect.coor[1][0])
+                    best_rect_orientation_to_place = rect_orientation_to_place
+                    best_rect_to_place = rect_to_place
 
-            if best_rect_to_place is not None:
+            if best_rect_to_place is not None:  # break when some fitting optimum found
                 break
 
             try:
                 cur_rects_to_place.append(next(rects_to_place_iter))
             except StopIteration:
-                raise NoFit("No more rectangles that could fit")
+                raise NoFit("No more rectangles that could fit. Left-over: {}".format(cur_rects_to_place))
 
         assert best_rect_to_place is not None
         return (best_rect_to_place, best_rect_orientation_to_place, best_free_rect)
+
+    def _get_fitting(self, rect_orientations_to_place, free_rects):
+        for rect_orientation_to_place in rect_orientations_to_place:
+            for free_rect in free_rects:
+                for rect_to_place in rect_orientation_to_place.get_fitting(free_rect):
+                    yield rect_to_place, free_rect, rect_orientation_to_place
 
 
 def scorerBSSF(rect_inside, rect_outside):

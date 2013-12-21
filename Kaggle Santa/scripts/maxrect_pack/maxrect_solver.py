@@ -34,6 +34,7 @@ class MaxRectSolver:
             if next_placement is None:
                 raise NoFit("Could place priority rects with {} left-overs".format(len(placer.rects_to_place)))
             new_placed_rect = next_placement.to_place_rect
+            new_placed_rect.set_position(next_placement.free_rect.coor[0][0], next_placement.free_rect.coor[1][0])
             self.place_rect(new_placed_rect)
 
             new_free_rects, removed_free_rects = maxrect.cut_off(new_placed_rect)

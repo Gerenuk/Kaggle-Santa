@@ -1,4 +1,6 @@
+from maxrect_pack import rect
 from maxrect_pack.maxrect import MaxRect
+from maxrect_pack.rect import COOR
 from maxrect_pack.rect_chosers import simple_smallest_x_fit
 from maxrect_pack.recthelper import random_rects
 
@@ -13,7 +15,7 @@ if __name__ == '__main__':
 
     for r in rects_cut:
         container_rect = simple_smallest_x_fit(r, m.free_rects)
-        r.set_position(container_rect.coor[0][0], container_rect.coor[1][0])
+        r = rect.set_position(r, container_rect[COOR][0][0], container_rect[COOR][1][0])
         m.cut_off(r)
 
     m.plot()

@@ -3,7 +3,8 @@ import itertools
 from maxrect_pack.maxrect import MaxRect
 from maxrect_pack.placer import Placer, TO_PLACE_RECT, FREE_RECT, TO_PLACE
 from maxrect_pack.plotrect import plotrects
-
+from maxrect_pack.rect import COOR
+import maxrect_pack.rect as rectangle
 
 LOWER_BOUND = 0
 
@@ -34,7 +35,7 @@ class MaxRectSolver:
             if next_placement is None:
                 raise NoFit("Could place priority rects with {} left-overs".format(len(placer.rects_to_place)))
             new_placed_rect = next_placement[TO_PLACE_RECT]
-            new_placed_rect.set_position(next_placement[FREE_RECT].coor[0][0], next_placement[FREE_RECT].coor[1][0])
+            new_placed_rect = rectangle.set_position(new_placed_rect, next_placement[FREE_RECT][COOR][0][0], next_placement[FREE_RECT][COOR][1][0])
             self.place_rect(new_placed_rect)
 
             new_free_rects, removed_free_rects = maxrect.cut_off(new_placed_rect)
@@ -49,7 +50,7 @@ class MaxRectSolver:
                     print("Partly solved with packing density {:.0%}".format(self.packing_density()))
                     return list(rects_to_place_rest_iter)  # resolve rest
                 new_placed_rect = next_placement[TO_PLACE_RECT]
-                new_placed_rect.set_position(next_placement[FREE_RECT].coor[0][0], next_placement[FREE_RECT].coor[1][0])
+                new_placed_rect = rectangle.set_position(new_placed_rect, next_placement[FREE_RECT][COOR][0][0], next_placement[FREE_RECT][COOR][1][0])
                 self.place_rect(new_placed_rect)
 
                 new_free_rects, removed_free_rects = maxrect.cut_off(new_placed_rect)
@@ -88,12 +89,12 @@ class MaxRectSolver:
 #         return []
 
     def place_rect(self, rect):
-        assert all(LOWER_BOUND <= x <= self.width for x in itertools.chain.from_iterable(rect.coor)), "Rectangle {} outside Maxrect boundary".format(rect)
+        assert all(LOWER_BOUND <= x <= self.width for x in itertools.chain.from_iterable(rect[COOR])), "Rectangle {} outside Maxrect boundary".format(rect)
         self.placed_rects.append(rect)
         # print("Placed rects {}".format(len(self.placed_rects)))
 
     def packing_density(self):
-        return sum(r.area for r in self.placed_rects) / (self.width * self.height)
+        return sum(rectangle.area(r) for r in self.placed_rects) / (self.width * self.height)
 
     def plot(self):
         rects_to_plot = list(self.placed_rects)

@@ -3,7 +3,8 @@ import itertools
 import reprlib
 
 from maxrect_pack.plotrect import plotrects
-from maxrect_pack.rect import Rectangle, CUT_TYPES
+from maxrect_pack.rect import CUT_TYPES, make_rect
+import maxrect_pack.rect as rectangle
 
 
 class MaxRect:
@@ -12,7 +13,7 @@ class MaxRect:
         self.height = height
 
         if free_rects is None:
-            free_rects = [Rectangle((0, width), (0, height))]
+            free_rects = [make_rect((0, width), (0, height))]
 
         self.free_rects = free_rects
 
@@ -31,12 +32,12 @@ class MaxRect:
         new_to_merge_dict = defaultdict(list)
         old_to_merge_dict = defaultdict(list)
         for rf in self.free_rects:
-            if rf.overlap(rect):
-                active, *cuts = rf.get_cuts(rect)
+            if rectangle.overlap(rf, rect):
+                active, *cuts = rectangle.get_cuts(rf, rect)
                 if active:
                     removed_rects.append(rf)
                     for cut_type in cuts:
-                        chopped_rect = rf.cut_off(rect, cut_type)
+                        chopped_rect = rectangle.cut_off(rf, rect, cut_type)
                         new_to_merge_dict[cut_type].append(chopped_rect)
                 else:
                     if len(cuts) == 1:  # len>2 only when corners touching
@@ -62,7 +63,7 @@ class MaxRect:
             for outside_rect in new_to_merge + old_to_merge:  # new rects can be in (old or new) rects
                 if inside_rect is outside_rect:
                     continue
-                if inside_rect.is_inside(outside_rect):
+                if rectangle.is_inside(inside_rect, outside_rect):
                     keep_rect.append(False)
                     break
             else:

@@ -1,4 +1,4 @@
-from maxrect_layer.rect3d import Rectangle3D
+from maxrect_pack.rect import DIM, make_rect3d
 
 
 class Orienter3D:
@@ -13,15 +13,15 @@ class Orienter3D:
         return id(self)
 
     def get_fitting(self, free_rect):
-        frx, fry = free_rect.dim
+        frx, fry = free_rect[DIM]
 
         for a, b, c in [(self.x, self.y, self.z), (self.x, self.z, self.y), (self.y, self.z, self.x)]:
             smaller_fitted = False
             if a <= frx and b <= fry:
-                yield Rectangle3D((0, a), (0, b), c)
+                yield make_rect3d((0, a), (0, b), c)
                 smaller_fitted = True
             if b <= frx and a <= fry:
-                yield Rectangle3D((0, b), (0, a), c)
+                yield make_rect3d((0, b), (0, a), c)
                 smaller_fitted = True
             if not smaller_fitted:
                 break

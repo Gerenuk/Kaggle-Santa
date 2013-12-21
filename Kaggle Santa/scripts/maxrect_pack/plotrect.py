@@ -2,7 +2,10 @@ import random
 
 from helper import get_quali_color
 import matplotlib.pyplot as plt
-from maxrect_pack.defaults import JITTER_SIZE, DEFAULT_ALPHA, DEFAULT_AREA_W, DEFAULT_AREA_H
+from maxrect_pack.defaults import JITTER_SIZE, DEFAULT_ALPHA, DEFAULT_AREA_W, \
+    DEFAULT_AREA_H
+from maxrect_pack.placer import FREE_RECT
+from maxrect_pack.rect import COOR
 
 
 def plotrects(*rects, plot_options=None, random_color=None, area_w=DEFAULT_AREA_W, area_h=DEFAULT_AREA_H, jitter=True):
@@ -19,10 +22,10 @@ def plotrects(*rects, plot_options=None, random_color=None, area_w=DEFAULT_AREA_
             plot_options = [{"fc":get_quali_color(), "alpha":DEFAULT_ALPHA} for _ in rects]
 
     for rect, plot_option in zip(rects, plot_options):
-        x = rect.coor[0][0]
-        y = rect.coor[1][0]
-        w = rect.coor[0][1] - x
-        h = rect.coor[1][1] - y
+        x = rect[COOR][0][0]
+        y = rect[COOR][1][0]
+        w = rect[COOR][0][1] - x
+        h = rect[COOR][1][1] - y
         plt.gca().add_patch(plt.Rectangle((x + get_jitter(), y + get_jitter()), w + get_jitter(), h + get_jitter(), **plot_option))
 
     plt.xlim([0, area_w])

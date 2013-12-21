@@ -1,4 +1,4 @@
-from collections import deque, defaultdict
+from collections import defaultdict
 import itertools
 import reprlib
 
@@ -12,7 +12,7 @@ class MaxRect:
         self.height = height
 
         if free_rects is None:
-            free_rects = deque([Rectangle((0, width), (0, height))])
+            free_rects = [Rectangle((0, width), (0, height))]
 
         self.free_rects = free_rects
 
@@ -25,8 +25,8 @@ class MaxRect:
     def cut_off(self, rect):
         """make cut adjustment and return edits
         """
-        new_free_rects = deque()
-        removed_rects = deque()
+        new_free_rects = []
+        removed_rects = []
 
         new_to_merge_dict = defaultdict(list)
         old_to_merge_dict = defaultdict(list)
@@ -45,7 +45,7 @@ class MaxRect:
             else:
                 new_free_rects.append(rf)
 
-        new_merged_rects = deque()
+        new_merged_rects = []
         for cut_type in CUT_TYPES:
             new_merged_rects.extend(self._merge_wrapped_rect(new_to_merge_dict[cut_type], old_to_merge_dict[cut_type]))
 
@@ -57,7 +57,7 @@ class MaxRect:
 
     @staticmethod
     def _merge_wrapped_rect(new_to_merge, old_to_merge):
-        keep_rect = deque()
+        keep_rect = []
         for inside_rect in new_to_merge:
             for outside_rect in new_to_merge + old_to_merge:  # new rects can be in (old or new) rects
                 if inside_rect is outside_rect:

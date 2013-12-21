@@ -1,6 +1,6 @@
 import cProfile
-from collections import deque
 
+from config import results
 from maxrect_layer.orienter3D import Orienter3D
 from maxrect_pack.maxrect_solver import MaxRectSolver, NoFit
 from maxrect_pack.scorer import scorerBSSF
@@ -13,7 +13,7 @@ HEIGHT = 1000
 
 
 def solve_all(presents_to_place):
-    layers = deque()
+    layers = []
     priority_pick = PRIORITY_PICK
     while presents_to_place:
         new_layer = MaxRectSolver(WIDTH, HEIGHT)
@@ -34,12 +34,11 @@ if __name__ == '__main__':
 
     presents_to_place = Orienter3D.orient_all(presents()[:USE_NUM_PRESENTS])
 
-    # layers = solve_all(presents_to_place)
     pr = cProfile.Profile()
     pr.enable()
     layers = solve_all(presents_to_place)
     pr.disable()
-    pr.dump_stats("default.profile")
+    pr.dump_stats(results("default.profile"))
 
     densities = [l.packing_density() for l in layers]  # @UndefinedVariable
     print("Average layer packing: {:1%}".format(sum(densities) / len(densities)))

@@ -10,5 +10,6 @@ project_dir = os.path.abspath(join(__file__, "../.."))
 data_dir = join(project_dir, "no-vc/data")
 
 data = FileGetter(data_dir)
+results = FileGetter(project_dir, "results")
 
 logging.basicConfig()

@@ -1,4 +1,3 @@
-from collections import deque
 import itertools
 
 from maxrect_pack.maxrect import MaxRect
@@ -18,7 +17,7 @@ class MaxRectSolver:
         self.width = width
         self.height = height
 
-        self.placed_rects = deque()
+        self.placed_rects = []
 
     def __repr__(self):
         return "MaxRectSolver({})".format(self.positioner)

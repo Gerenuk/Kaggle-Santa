@@ -6,7 +6,7 @@ from maxrect_pack.maxrect_solver import MaxRectSolver, NoFit
 from maxrect_pack.scorer import scorerBSSF
 
 
-PRIORITY_PICK = 70
+PRIORITY_PICK = 80
 USE_NUM_PRESENTS = 10000
 WIDTH = 1000
 HEIGHT = 1000

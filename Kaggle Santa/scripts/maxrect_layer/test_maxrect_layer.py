@@ -39,7 +39,7 @@ if __name__ == '__main__':
     pr.enable()
     layers = solve_all(presents_to_place)
     pr.disable()
-    pr.dump_stats("test_maxrect_layer.profile")
+    pr.dump_stats("default.profile")
 
     densities = [l.packing_density() for l in layers]  # @UndefinedVariable
     print("Average layer packing: {:1%}".format(sum(densities) / len(densities)))

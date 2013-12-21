@@ -1,10 +1,7 @@
-import cProfile
-
 from config import results
 from maxrect_layer.orienter3D import Orienter3D
 from maxrect_pack.maxrect_solver import MaxRectSolver, NoFit
 from maxrect_pack.scorer import scorerBSSF
-
 
 PRIORITY_PICK = 80
 USE_NUM_PRESENTS = 10000
@@ -30,9 +27,11 @@ def solve_all(presents_to_place):
 
 if __name__ == '__main__':
     from load.load import Present, presents
+    import cProfile
     print("Starting")
+    all_presents = presents()
 
-    presents_to_place = Orienter3D.orient_all(presents()[:USE_NUM_PRESENTS])
+    presents_to_place = Orienter3D.orient_all(all_presents[:USE_NUM_PRESENTS])
 
     pr = cProfile.Profile()
     pr.enable()
@@ -42,6 +41,5 @@ if __name__ == '__main__':
 
     densities = [l.packing_density() for l in layers]  # @UndefinedVariable
     print("Average layer packing: {:1%}".format(sum(densities) / len(densities)))
-    # rects_to_place = random_rects(WIDTH, HEIGHT, 200, 200, 100)
 
 

@@ -14,6 +14,9 @@ class Orienter:
         if b <= frx and a <= fry:
             yield make_rect((0, b), (0, a))
 
+#     def __lt__(self, other):
+#         return self.base_rect < other.base_rect  #!!!
+
     @staticmethod
     def orient_all(rects):
         return list(map(Orienter, rects))

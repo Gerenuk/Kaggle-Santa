@@ -1,6 +1,7 @@
 from collections import namedtuple
 import csv
 import pickle
+from operator import attrgetter
 
 from config import data
 
@@ -25,6 +26,6 @@ def load_csv(file):
 
 def presents():
     Present = namedtuple("Present", "id coor")
-    return pickle.load(data.open("presents.pickle", options="rb"))
+    return sorted(pickle.load(data.open("presents.pickle", options="rb")), key=attrgetter("id"))
 
 # change

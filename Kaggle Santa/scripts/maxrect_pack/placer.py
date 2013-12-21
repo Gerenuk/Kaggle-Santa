@@ -10,9 +10,6 @@ class OrderedLinkedListNode:
         pass
 
 
-# Placement = namedtuple("Placement", "score to_place to_place_rect free_rect")
-
-
 class EndOfList(Exception):
     pass
 
@@ -30,10 +27,7 @@ class Placer:
         self.scorer = scorer
         self.linked_list = OrderedLinkedListNode(None)
 
-        placements = [(scorer(tp, fr), tpo, tp, fr) for fr in free_rects
-                                                         for tpo in rects_to_place
-                                                         for tp in tpo.get_fitting(fr)]
-        placements.sort(key=itemgetter(0), reverse=True)
+        placements = self._make_placements(free_rects, self.rects_to_place)
 
         head = self.linked_list
         for placement in placements:
@@ -42,6 +36,16 @@ class Placer:
 
     def __repr__(self):
         return "Placer({} free, {} to place)".format(len(self.free_rects), len(self.rects_to_place))
+
+    def _make_placements(self, free_rects, rects_to_place):
+        placements = [(self.scorer(tp, fr), tpo, tp, fr) for fr in free_rects  # CAREFUL: cycling over a set introduce randomess!
+                                                         for tpo in rects_to_place
+                                                         for tp in tpo.get_fitting(fr)]
+#         placements = [(self.scorer(tp, fr), tpo, tp, fr) for fr in sorted(free_rects)
+#                                                          for tpo in sorted(rects_to_place)  #!!!
+#                                                          for tp in tpo.get_fitting(fr)]
+        placements.sort(key=itemgetter(0), reverse=True)
+        return placements
 
     def get_best(self):
         if self.linked_list.next is None:
@@ -72,10 +76,7 @@ class Placer:
 
     def insert(self, free_rects):
         self.free_rects |= set(free_rects)
-        new_placements = [(self.scorer(tp, fr), tpo, tp, fr) for tpo in self.rects_to_place
-                                                                  for fr in free_rects
-                                                                  for tp in tpo.get_fitting(fr)]
-        new_placements.sort(key=itemgetter(0), reverse=True)
+        new_placements = self._make_placements(free_rects, self.rects_to_place)
 
         head = self.linked_list
         new_placements_iter = iter(new_placements)

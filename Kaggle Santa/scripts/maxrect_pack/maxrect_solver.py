@@ -25,11 +25,12 @@ class MaxRectSolver:
 
     def solve(self, rects_to_place, scorer, priority_pick=None):
         rects_to_place_prio = rects_to_place[:priority_pick]
-        # rects_to_place_rest = rects_to_place[self.priority_pick:] if self.priority_pick is not None else []
+        rects_to_place_rest = rects_to_place[priority_pick:] if priority_pick is not None else []
 
         maxrect = MaxRect(self.width, self.height)
         placer = Placer(maxrect.free_rects, rects_to_place_prio, scorer)
         while placer.rects_to_place:
+            # print("PR", len(placer.rects_to_place), "FR", len(placer.free_rects))
             next_placement = placer.get_best()
             if next_placement is None:
                 raise NoFit("Could place priority rects with {} left-overs".format(len(placer.rects_to_place)))
@@ -40,6 +41,24 @@ class MaxRectSolver:
             new_free_rects, removed_free_rects = maxrect.cut_off(new_placed_rect)
             placer.remove(removed_free_rects, next_placement.to_place)
             placer.insert(new_free_rects)
+
+        if rects_to_place_rest:
+            rects_to_place_rest_iter = iter(rects_to_place_rest)
+            for rect_to_place in rects_to_place_rest_iter:
+                next_placement = placer.get_best_for(rect_to_place)
+                if next_placement is None:
+                    print("Partly solved with packing density {:.0%}".format(self.packing_density()))
+                    return list(rects_to_place_rest_iter)  # resolve rest
+                new_placed_rect = next_placement.to_place_rect
+                new_placed_rect.set_position(next_placement.free_rect.coor[0][0], next_placement.free_rect.coor[1][0])
+                self.place_rect(new_placed_rect)
+
+                new_free_rects, removed_free_rects = maxrect.cut_off(new_placed_rect)
+                placer.remove(removed_free_rects, None)
+                placer.insert(new_free_rects)
+
+        print("All solved with packing density {:.0%}".format(self.packing_density()))
+        return []
 
         #------------------------------------------------------------- Place all
 #         while rects_to_place_prio:

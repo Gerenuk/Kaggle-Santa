@@ -10,6 +10,9 @@ class Orienter3D:
     def __repr__(self):
         return "[[{}, {}, {}]]".format(self.x, self.y, self.z)
 
+    def __hash__(self):
+        return id(self)
+
     def get_fitting(self, free_rect):
         frx, fry = free_rect.dim
 

@@ -35,14 +35,27 @@ class Placer:
             head.next = OrderedLinkedListNode(placement)
             head = head.next
 
+    def __repr__(self):
+        return "Placer({} free, {} to place)".format(len(self.free_rects), len(self.rects_to_place))
+
     def get_best(self):
         if self.linked_list.next is None:
             return None
         return self.linked_list.next.elem
 
+    def get_best_for(self, to_place):
+        new_placements = [Placement(self.scorer(tp, fr), to_place, tp, fr) for fr in self.free_rects
+                                                                           for tp in to_place.get_fitting(fr)]
+        if new_placements:
+            return max(new_placements, key=attrgetter("score"))
+        else:
+            return None
+
     def remove(self, free_rects, to_place_rect):
         self.free_rects -= set(free_rects)
-        self.rects_to_place.remove(to_place_rect)
+
+        if to_place_rect is not None:
+            self.rects_to_place.remove(to_place_rect)
 
         head = self.linked_list
         while head.next is not None:
@@ -53,6 +66,7 @@ class Placer:
                 head = head.next
 
     def insert(self, free_rects):
+        self.free_rects |= set(free_rects)
         new_placements = [Placement(self.scorer(tp, fr), tpo, tp, fr) for tpo in self.rects_to_place
                                                                       for fr in free_rects
                                                                       for tp in tpo.get_fitting(fr)]

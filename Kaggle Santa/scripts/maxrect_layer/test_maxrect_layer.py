@@ -3,7 +3,7 @@ from collections import deque
 
 from maxrect_layer.orienter3D import Orienter3D
 from maxrect_pack.maxrect_solver import MaxRectSolver, NoFit
-from maxrect_pack.positioner import Positioner, scorerBSSF
+from maxrect_pack.scorer import scorerBSSF
 
 
 PRIORITY_PICK = 70
@@ -16,9 +16,9 @@ def solve_all(presents_to_place):
     layers = deque()
     priority_pick = PRIORITY_PICK
     while presents_to_place:
-        new_layer = MaxRectSolver(WIDTH, HEIGHT, Positioner(scorerBSSF), priority_pick=priority_pick)
+        new_layer = MaxRectSolver(WIDTH, HEIGHT)
         try:
-            presents_to_place = new_layer.solve(presents_to_place)
+            presents_to_place = new_layer.solve(presents_to_place, scorerBSSF, priority_pick)
             layers.append(new_layer)
             print("Layer {} closed with {} rects; {} presents to place left".format(len(layers), len(new_layer.placed_rects), len(presents_to_place)))
             if not presents_to_place:

@@ -3,7 +3,7 @@ import itertools
 import reprlib
 
 from maxrect_pack.plotrect import plotrects
-from maxrect_pack.rect import Rectangle
+from maxrect_pack.rect import Rectangle, CUT_TYPES
 
 
 class MaxRect:
@@ -23,41 +23,50 @@ class MaxRect:
         plotrects(*self.free_rects, area_w=self.width, area_h=self.height)
 
     def cut_off(self, rect):
+        """make cut adjustment and return edits
+        """
         new_free_rects = deque()
+        removed_rects = deque()
 
-        to_merge_dict = defaultdict(deque)
+        new_to_merge_dict = defaultdict(list)
+        old_to_merge_dict = defaultdict(list)
         for rf in self.free_rects:
             if rf.overlap(rect):
                 active, *cuts = rf.get_cuts(rect)
                 if active:
+                    removed_rects.append(rf)
                     for cut_type in cuts:
                         chopped_rect = rf.cut_off(rect, cut_type)
-                        to_merge_dict[cut_type].append(chopped_rect)
+                        new_to_merge_dict[cut_type].append(chopped_rect)
                 else:
                     if len(cuts) == 1:  # len>2 only when corners touching
-                        to_merge_dict[cuts[0]].append(rf)
-                    else:
-                        new_free_rects.append(rf)
+                        old_to_merge_dict[cuts[0]].append(rf)
+                    new_free_rects.append(rf)
             else:
                 new_free_rects.append(rf)
 
-        for _cut, rects in to_merge_dict.items():
-            new_free_rects.extend(self._merge_wrapped_rect(rects))
+        new_merged_rects = deque()
+        for cut_type in CUT_TYPES:
+            new_merged_rects.extend(self._merge_wrapped_rect(new_to_merge_dict[cut_type], old_to_merge_dict[cut_type]))
+
+        new_free_rects.extend(new_merged_rects)
 
         self.free_rects = new_free_rects
 
+        return new_merged_rects, removed_rects
+
     @staticmethod
-    def _merge_wrapped_rect(rects_to_merge):
+    def _merge_wrapped_rect(new_to_merge, old_to_merge):
         keep_rect = deque()
-        for check_rect in rects_to_merge:
-            for outside_rect in rects_to_merge:
-                if check_rect is outside_rect:
+        for inside_rect in new_to_merge:
+            for outside_rect in new_to_merge + old_to_merge:  # new rects can be in (old or new) rects
+                if inside_rect is outside_rect:
                     continue
-                if check_rect.is_inside(outside_rect):
+                if inside_rect.is_inside(outside_rect):
                     keep_rect.append(False)
                     break
             else:
                 keep_rect.append(True)
-        result = list(itertools.compress(rects_to_merge, keep_rect))
+        result = list(itertools.compress(new_to_merge, keep_rect))
         # print("Merged {} of {} rectangles".format(len(rects_to_merge) - len(result), len(rects_to_merge)))
         return result

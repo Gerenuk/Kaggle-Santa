@@ -1,9 +1,11 @@
 class Positioner:
-    def __init__(self, scorer):
+    def __init__(self, scorer, subsample_to_place=None):
         self.scorer = scorer
+        self.subsample_to_place = subsample_to_place
 
     def get_best_position(self, rect_orientations_to_place, free_rects):
         assert rect_orientations_to_place
+        assert free_rects
 
         best_score = float("-inf")
         best_free_rect = None
@@ -33,14 +35,3 @@ class Positioner:
                 for rect_to_place in rect_orientation_to_place.get_fitting(free_rect):
                     yield rect_to_place, free_rect, rect_orientation_to_place
 
-
-def scorerBSSF(rect_inside, rect_outside):
-    (ix1, ix2), (iy1, iy2) = rect_inside.coor
-    (ox1, ox2), (oy1, oy2) = rect_outside.coor
-    iw = ix2 - ix1
-    ih = iy2 - iy1
-    ow = ox2 - ox1
-    oh = oy2 - oy1
-    assert iw <= ow
-    assert ih <= oh
-    return -min(ow - iw, oh - ih)

@@ -6,7 +6,7 @@ from maxrect_pack.maxrect_solver import MaxRectSolver, NoFit
 from maxrect_pack.positioner import Positioner, scorerBSSF
 
 
-PRIORITY_PICK = 80
+PRIORITY_PICK = 70
 USE_NUM_PRESENTS = 10000
 WIDTH = 1000
 HEIGHT = 1000
@@ -19,10 +19,10 @@ def solve_all(presents_to_place):
         new_layer = MaxRectSolver(WIDTH, HEIGHT, Positioner(scorerBSSF), priority_pick=priority_pick)
         try:
             presents_to_place = new_layer.solve(presents_to_place)
-            if not presents_to_place:
-                break
             layers.append(new_layer)
             print("Layer {} closed with {} rects; {} presents to place left".format(len(layers), len(new_layer.placed_rects), len(presents_to_place)))
+            if not presents_to_place:
+                break
         except NoFit:
             priority_pick -= 10
             assert priority_pick > 1

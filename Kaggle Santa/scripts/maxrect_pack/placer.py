@@ -1,5 +1,4 @@
-from collections import namedtuple
-from operator import attrgetter
+from operator import itemgetter
 
 
 class OrderedLinkedListNode:
@@ -11,11 +10,17 @@ class OrderedLinkedListNode:
         pass
 
 
-Placement = namedtuple("Placement", "score to_place to_place_rect free_rect")
+# Placement = namedtuple("Placement", "score to_place to_place_rect free_rect")
 
 
 class EndOfList(Exception):
     pass
+
+
+SCORE = 0
+TO_PLACE = 1
+TO_PLACE_RECT = 2
+FREE_RECT = 3
 
 
 class Placer:
@@ -25,10 +30,10 @@ class Placer:
         self.scorer = scorer
         self.linked_list = OrderedLinkedListNode(None)
 
-        placements = [Placement(scorer(tp, fr), tpo, tp, fr) for fr in free_rects
-                                                             for tpo in rects_to_place
-                                                             for tp in tpo.get_fitting(fr)]
-        placements.sort(key=attrgetter("score"), reverse=True)
+        placements = [(scorer(tp, fr), tpo, tp, fr) for fr in free_rects
+                                                         for tpo in rects_to_place
+                                                         for tp in tpo.get_fitting(fr)]
+        placements.sort(key=itemgetter(0), reverse=True)
 
         head = self.linked_list
         for placement in placements:
@@ -44,10 +49,10 @@ class Placer:
         return self.linked_list.next.elem
 
     def get_best_for(self, to_place):
-        new_placements = [Placement(self.scorer(tp, fr), to_place, tp, fr) for fr in self.free_rects
-                                                                           for tp in to_place.get_fitting(fr)]
+        new_placements = [(self.scorer(tp, fr), to_place, tp, fr) for fr in self.free_rects
+                                                                       for tp in to_place.get_fitting(fr)]
         if new_placements:
-            return max(new_placements, key=attrgetter("score"))
+            return max(new_placements, key=itemgetter(0))
         else:
             return None
 
@@ -60,17 +65,17 @@ class Placer:
         head = self.linked_list
         while head.next is not None:
             next_placement = head.next.elem
-            if next_placement.to_place is to_place_rect or next_placement.free_rect in free_rects:
+            if next_placement[TO_PLACE] is to_place_rect or next_placement[FREE_RECT] in free_rects:
                 head.next = head.next.next
             else:
                 head = head.next
 
     def insert(self, free_rects):
         self.free_rects |= set(free_rects)
-        new_placements = [Placement(self.scorer(tp, fr), tpo, tp, fr) for tpo in self.rects_to_place
-                                                                      for fr in free_rects
-                                                                      for tp in tpo.get_fitting(fr)]
-        new_placements.sort(key=attrgetter("score"), reverse=True)
+        new_placements = [(self.scorer(tp, fr), tpo, tp, fr) for tpo in self.rects_to_place
+                                                                  for fr in free_rects
+                                                                  for tp in tpo.get_fitting(fr)]
+        new_placements.sort(key=itemgetter(0), reverse=True)
 
         head = self.linked_list
         new_placements_iter = iter(new_placements)
@@ -78,8 +83,8 @@ class Placer:
             for placement in new_placements_iter:
                 if head.next is None:
                     raise EndOfList()
-                score = placement.score
-                while head.next.elem.score > score:
+                score = placement[SCORE]
+                while head.next.elem[SCORE] > score:
                     head = head.next
                     if head.next is None:
                         raise EndOfList()

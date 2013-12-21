@@ -1,7 +1,7 @@
 import itertools
 
 from maxrect_pack.maxrect import MaxRect
-from maxrect_pack.placer import Placer
+from maxrect_pack.placer import Placer, TO_PLACE_RECT, FREE_RECT, TO_PLACE
 from maxrect_pack.plotrect import plotrects
 
 
@@ -33,12 +33,12 @@ class MaxRectSolver:
             next_placement = placer.get_best()
             if next_placement is None:
                 raise NoFit("Could place priority rects with {} left-overs".format(len(placer.rects_to_place)))
-            new_placed_rect = next_placement.to_place_rect
-            new_placed_rect.set_position(next_placement.free_rect.coor[0][0], next_placement.free_rect.coor[1][0])
+            new_placed_rect = next_placement[TO_PLACE_RECT]
+            new_placed_rect.set_position(next_placement[FREE_RECT].coor[0][0], next_placement[FREE_RECT].coor[1][0])
             self.place_rect(new_placed_rect)
 
             new_free_rects, removed_free_rects = maxrect.cut_off(new_placed_rect)
-            placer.remove(removed_free_rects, next_placement.to_place)
+            placer.remove(removed_free_rects, next_placement[TO_PLACE])
             placer.insert(new_free_rects)
 
         if rects_to_place_rest:
@@ -48,8 +48,8 @@ class MaxRectSolver:
                 if next_placement is None:
                     print("Partly solved with packing density {:.0%}".format(self.packing_density()))
                     return list(rects_to_place_rest_iter)  # resolve rest
-                new_placed_rect = next_placement.to_place_rect
-                new_placed_rect.set_position(next_placement.free_rect.coor[0][0], next_placement.free_rect.coor[1][0])
+                new_placed_rect = next_placement[TO_PLACE_RECT]
+                new_placed_rect.set_position(next_placement[FREE_RECT].coor[0][0], next_placement[FREE_RECT].coor[1][0])
                 self.place_rect(new_placed_rect)
 
                 new_free_rects, removed_free_rects = maxrect.cut_off(new_placed_rect)

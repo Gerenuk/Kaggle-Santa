@@ -18,10 +18,10 @@ class Orienter3D:
         for a, b, c in [(self.x, self.y, self.z), (self.x, self.z, self.y), (self.y, self.z, self.x)]:
             smaller_fitted = False
             if a <= frx and b <= fry:
-                yield make_rect3d((0, a), (0, b), c)
+                yield make_rect3d((0, a), (0, b), c, self.base_rect.id)
                 smaller_fitted = True
             if b <= frx and a <= fry:
-                yield make_rect3d((0, b), (0, a), c)
+                yield make_rect3d((0, b), (0, a), c, self.base_rect.id)
                 smaller_fitted = True
             if not smaller_fitted:
                 break

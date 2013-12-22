@@ -1,6 +1,3 @@
-import random
-import trace
-
 from maxrect_pack.maxrect_solver import MaxRectSolver
 from maxrect_pack.orienter import Orienter
 from maxrect_pack.recthelper import random_rects

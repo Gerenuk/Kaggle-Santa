@@ -1,45 +1,41 @@
 from config import results
+from maxrect_layer.maxrect_layers import MaxrectLayers
 from maxrect_layer.orienter3D import Orienter3D
-from maxrect_pack.maxrect_solver import MaxRectSolver, NoFit
 from maxrect_pack.scorer import scorerBSSF
 
-PRIORITY_PICK = 80
-USE_NUM_PRESENTS = 10000
+
+PROFILE = True
+SUBMISSION_FILENAME = results("submission.csv.gz")
+
+PRIORITY_PICK = 0
+USE_NUM_PRESENTS = 10000  # None for all
 WIDTH = 1000
 HEIGHT = 1000
 
 
-def solve_all(presents_to_place):
-    layers = []
-    priority_pick = PRIORITY_PICK
-    while presents_to_place:
-        new_layer = MaxRectSolver(WIDTH, HEIGHT)
-        try:
-            presents_to_place = new_layer.solve(presents_to_place, scorerBSSF, priority_pick)
-            layers.append(new_layer)
-            print("Layer {} closed with {} rects; {} presents to place left".format(len(layers), len(new_layer.placed_rects), len(presents_to_place)))
-            if not presents_to_place:
-                break
-        except NoFit:
-            priority_pick -= 10
-            assert priority_pick > 1
-    return layers
-
 if __name__ == '__main__':
     from load.load import Present, presents
-    import cProfile
     print("Starting")
     all_presents = presents()
 
     presents_to_place = Orienter3D.orient_all(all_presents[:USE_NUM_PRESENTS])
 
-    pr = cProfile.Profile()
-    pr.enable()
-    layers = solve_all(presents_to_place)
-    pr.disable()
-    pr.dump_stats(results("default.profile"))
+    maxrect_layers = MaxrectLayers(WIDTH, HEIGHT, scorerBSSF, priority_pick=PRIORITY_PICK, make_timer=True, gc_collect_cycle=1000)
 
-    densities = [l.packing_density() for l in layers]  # @UndefinedVariable
+    if PROFILE:
+        import cProfile
+        pr = cProfile.Profile()
+        pr.enable()
+        maxrect_layers.solve(presents_to_place)
+        pr.disable()
+        pr.dump_stats(results("default.profile"))
+    else:
+        maxrect_layers.solve(presents_to_place)
+
+    densities = [l.packing_density() for l in maxrect_layers.layers]
     print("Average layer packing: {:1%}".format(sum(densities) / len(densities)))
+
+    if SUBMISSION_FILENAME:
+        maxrect_layers.make_submission(SUBMISSION_FILENAME)
 
 

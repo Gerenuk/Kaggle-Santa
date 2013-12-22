@@ -3,18 +3,20 @@ CUT_TYPES = [(0, 0), (0, 1), (1, 0), (1, 1)]
 
 COOR = 0
 DIM = 1
+DEPTH = 2  # for make_rect3d
+ID = 3
 
 
 def make_rect(x12, y12):
     return ((x12, y12), (x12[1] - x12[0], y12[1] - y12[0]))
 
 
-def make_rect3d(x12, y12, height):
-    return ((x12, y12), (x12[1] - x12[0], y12[1] - y12[0]), height)
+def make_rect3d(x12, y12, *rest):
+    return ((x12, y12), (x12[1] - x12[0], y12[1] - y12[0])) + rest
 
 
 def set_position(rect, x, y):
-    return make_rect((x, x + rect[DIM][0]), (y, y + rect[DIM][1]))
+    return make_rect((x, x + rect[DIM][0]), (y, y + rect[DIM][1])) + rect[2:]
 
 
 def get_cuts(self, rect):

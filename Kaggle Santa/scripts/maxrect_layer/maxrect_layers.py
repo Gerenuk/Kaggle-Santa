@@ -66,14 +66,16 @@ class MaxrectLayers:
         cubes = []
         for layer, layer_depth_pos in zip(self.layers, self.layer_depth_pos):
             for cube in layer.placed_rects:
-                x1, y1, z1 = cube[COOR][0][0] + 1, cube[COOR][1][0] + 1, layer_depth_pos + 1
-                x2, y2, z2 = cube[COOR][0][1], cube[COOR][1][1], layer_depth_pos + cube[DEPTH]
+                x1, y1, z1 = cube[COOR][0][0] + 1, cube[COOR][1][0] + 1, self.total_depth - layer_depth_pos
+                x2, y2, z2 = cube[COOR][0][1], cube[COOR][1][1], self.total_depth - (layer_depth_pos + cube[DEPTH]) + 1
                 idnum = cube[ID]
                 cubes.append((x1, y1, z1, x2, y2, z2, idnum))
         with gzip.open(filename, "w") as outfile:
             writer = csv.writer(io.TextIOWrapper(outfile, newline="", write_through=True))
             writer.writerow(["PresentId"] + ["{}{}".format(lett, num) for num in "12345678" for lett in "xyz"])
             for x1, y1, z1, x2, y2, z2, idnum in cubes:
+                if not (all(1 <= t <= 1000 for t in [x1, y1, x2, y2]) and z1 >= 1 and z2 >= 1):
+                    print("Invalid present #{} [{},{},{}|{},{},{}]".format(idnum, x1, y1, z1, x2, y2, z2))
                 writer.writerow((idnum,
                                  x1, y1, z1,
                                  x1, y1, z2,

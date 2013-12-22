@@ -26,6 +26,6 @@ def load_csv(file):
 
 def presents():
     Present = namedtuple("Present", "id coor")
-    return sorted(pickle.load(data.open("presents.pickle", options="rb")), key=attrgetter("id"), reverse=True)
+    return sorted(pickle.load(data.open("presents.pickle", options="rb")), key=attrgetter("id"))
 
 # change

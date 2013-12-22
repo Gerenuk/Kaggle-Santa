@@ -1,14 +1,14 @@
-from config import results
+from config import results, temp
 from maxrect_layer.maxrect_layers import MaxrectLayers
 from maxrect_layer.orienter3D import Orienter3D
 from maxrect_pack.scorer import scorerBSSF
 
 
 PROFILE = True
-SUBMISSION_FILENAME = results("submission.csv.gz")
+SUBMISSION_FILENAME = temp("submission.csv.gz")
 
 PRIORITY_PICK = 0
-USE_NUM_PRESENTS = 10000  # None for all
+USE_NUM_PRESENTS = None  # None for all
 WIDTH = 1000
 HEIGHT = 1000
 

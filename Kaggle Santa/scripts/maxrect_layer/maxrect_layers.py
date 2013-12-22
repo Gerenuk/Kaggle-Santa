@@ -51,6 +51,7 @@ class MaxrectLayers:
             gc_collect_count += 1
             if gc_collect_count == self.gc_collect_cycle:
                 gc_collect_count = 0
+                print("GC collect")
                 gc.collect()
 
     def _add_layer(self, layer):
@@ -59,7 +60,7 @@ class MaxrectLayers:
         self.layer_depth_pos.append(self.total_depth)
         self.total_depth += new_depth
         self.num_placed_cubes += len(layer.placed_rects)
-        print("Layer {} closed with {} cubes and height {} ({:.0f} score for 1e6 cubes)".format(len(self.layers), len(layer.placed_rects), self.total_depth, 2e6 * self.total_depth / self.num_placed_cubes))
+        print("Layer {:4} at {:7} closed with {:4} cubes and height {:4} ({:7.0f} score for 1e6 cubes)".format(len(self.layers), self.total_depth, len(layer.placed_rects), new_depth, 2e6 * self.total_depth / self.num_placed_cubes))
 
     def make_submission(self, filename):
         cubes = []

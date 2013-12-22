@@ -11,5 +11,6 @@ data_dir = join(project_dir, "no-vc/data")
 
 data = FileGetter(data_dir)
 results = FileGetter(project_dir, "results")
+temp = FileGetter(project_dir, "temp")
 
 logging.basicConfig()
